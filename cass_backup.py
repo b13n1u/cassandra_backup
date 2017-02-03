@@ -191,6 +191,9 @@ def backup_schemas(target_dir, filename, tmp_dir='/tmp', host="localhost"):
 
 def main():
     now = datetime.datetime.now().strftime('%d%m%Y_%H%M%S')
+    
+    os.system('/usr/bin/ionice -c2 -n7 -p%s' % os.getpid()) # Make my self a little bit less I/O and CPU hungry.
+    os.nice(19)
 
     p = argparse.ArgumentParser(description='This is script is handling cassandra snapshots. It makes coffe creates, removes and backups cassandra snapshots.')
 
