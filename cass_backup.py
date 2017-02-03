@@ -4,7 +4,6 @@
 # on cassandra nodes.
 # In a primitive way it can also create compresses backups of the snapshots.
 # version: 0.02
-# author: mbienek@ebay.com
 
 import argparse
 import os
