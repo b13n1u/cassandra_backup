@@ -2,8 +2,9 @@
 
 # Super duper, coffe making, dish washing script to create manage snapshots
 # on cassandra nodes.
-# In a primitive way it can also create compresses backups of the snapshots.
+# In a primitive way it can also create compressed backups of the snapshots.
 # version: 0.02
+# author: mbienek@ebay.com
 
 import argparse
 import os
@@ -108,14 +109,16 @@ def remove_snapshots(hours=24, keyspace="all", table="all", data_dir="/var/lib/c
         table = "*"
 
     snapshot_list = glob.glob('%s/%s/%s/snapshots/*' % (data_dir, keyspace, table))
-    print snapshot_list
+    # print snapshot_list
+    count = 0
     for snapshot in snapshot_list:
         if (int(time.time()) - int(os.path.getmtime(snapshot))) > int(hours * 3600):
             if os.path.exists(snapshot):
                 # remove if exists
                 #print "Keyspace: %s, table %s, snapshot: %s removed." % (keyspace, table, os.path.basename(snapshot)) #fixit
+                count += 1
                 shutil.rmtree(snapshot)
-    print "Removed snapshots older than: %d hours. For keyspace: %s. Table: %s. In dir: %s." % (hours, keyspace, table, data_dir)
+    print "Removed %s snapshots older than: %d hours. For keyspace: %s. Table: %s. In dir: %s." % (count, hours, keyspace, table, data_dir)
 
 def rm_tar_files(targetdir, hours=48):
     '''
@@ -147,6 +150,7 @@ def compr_snapshot(filename, target, keyspace="all", table="all", snapshot="all"
         for snapshot in snapshots:
             tar.add(snapshot)
         tar.close()
+
     print 'Created tar.gz file: %s/%s at: %s' % (target, filename, datetime.datetime.now())
 
 def backup_schemas(target_dir, filename, tmp_dir='/tmp', host="localhost"):
@@ -191,10 +195,9 @@ def backup_schemas(target_dir, filename, tmp_dir='/tmp', host="localhost"):
 
 def main():
     now = datetime.datetime.now().strftime('%d%m%Y_%H%M%S')
-    
-    os.system('/usr/bin/ionice -c2 -n7 -p%s' % os.getpid()) # Make my self a little bit less I/O and CPU hungry.
-    os.nice(19)
 
+    os.system('/usr/bin/ionice -c2 -n7 -p%s' % os.getpid()) # make it a little bit less resource hungry
+    os.nice(19)
     p = argparse.ArgumentParser(description='This is script is handling cassandra snapshots. It makes coffe creates, removes and backups cassandra snapshots.')
 
     sub = p.add_subparsers(help='commands', dest='mode')
