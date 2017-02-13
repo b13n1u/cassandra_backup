@@ -118,7 +118,11 @@ def remove_snapshots(hours=24, keyspace="all", table="all", data_dir="/var/lib/c
                 #print "Keyspace: %s, table %s, snapshot: %s removed." % (keyspace, table, os.path.basename(snapshot)) #fixit
                 count += 1
                 shutil.rmtree(snapshot)
+<<<<<<< HEAD
+    print "%s Removed %s snapshots older than: %d hours. For keyspace: %s. Table: %s. In dir: %s." % (datetime.datetime.now(), count, hours, keyspace, table, data_dir)
+=======
     print "Removed %s snapshots older than: %d hours. For keyspace: %s. Table: %s. In dir: %s." % (count, hours, keyspace, table, data_dir)
+>>>>>>> 0c632e4b90ca8ac211a30ff8d29e1893a67260a6
 
 def rm_tar_files(targetdir, hours=48):
     '''
@@ -136,13 +140,21 @@ def rm_tar_files(targetdir, hours=48):
     if files_list == 0:
         print "nothing"
     else:
+<<<<<<< HEAD
+        print "%s Removed tar.gz files older than: %d hours. In dir: %s" % (datetime.datetime.now(), hours, targetdir)
+=======
         print "Removed tar.gz files older than: %d hours. In dir: %s" % (hours, targetdir)
+>>>>>>> 0c632e4b90ca8ac211a30ff8d29e1893a67260a6
 
 def compr_snapshot(filename, target, keyspace="all", table="all", snapshot="all", data_dir="/var/lib/cassandra/data"):
     '''
     Compres snapshot. By default all snapshots will be compressed
     '''
+<<<<<<< HEAD
+    print "%s Doing tar gzip of snapshot files. (This takes some time)." % datetime.datetime.now()
+=======
     print "Doing tar gzip of snapshot files at: %s. (This takes some time)." % datetime.datetime.now()
+>>>>>>> 0c632e4b90ca8ac211a30ff8d29e1893a67260a6
     snapshots = get_snapshots_path(keyspace, table, snapshot, data_dir)
     tar_path = "%s/%s" % (target, filename)
 
@@ -151,13 +163,21 @@ def compr_snapshot(filename, target, keyspace="all", table="all", snapshot="all"
             tar.add(snapshot)
         tar.close()
 
+<<<<<<< HEAD
+    print '%s Created tar.gz file: %s/%s ' % (datetime.datetime.now(), target, filename)
+=======
     print 'Created tar.gz file: %s/%s at: %s' % (target, filename, datetime.datetime.now())
+>>>>>>> 0c632e4b90ca8ac211a30ff8d29e1893a67260a6
 
 def backup_schemas(target_dir, filename, tmp_dir='/tmp', host="localhost"):
     '''
     Create a backup of the keyspace schemas. And the ring range for a node. Requires a target directory and a filename.
     '''
+<<<<<<< HEAD
+    print "%s Starting schemas backup." % datetime.datetime.now()
+=======
     print "Starting schemas backup at %s" % datetime.datetime.now()
+>>>>>>> 0c632e4b90ca8ac211a30ff8d29e1893a67260a6
     keyspaces = exec_cmd('cqlsh %s -e "DESC KEYSPACES"' % host)
     if not keyspaces:
         print "Schema backup failed."
@@ -191,7 +211,11 @@ def backup_schemas(target_dir, filename, tmp_dir='/tmp', host="localhost"):
         tar.close()
     shutil.rmtree("%s/schemas/" %tmp_dir)    #remove tmp files
     shutil.move(tar_path, target_dir)
+<<<<<<< HEAD
+    print "%s Created schema and ring backup %s for schemas: %s." % (datetime.datetime.now(), filename, keyspaces.rstrip())
+=======
     print "Created schema and ring backup %s for schemas: %s at: %s" % (filename, keyspaces.rstrip(), datetime.datetime.now())
+>>>>>>> 0c632e4b90ca8ac211a30ff8d29e1893a67260a6
 
 def main():
     now = datetime.datetime.now().strftime('%d%m%Y_%H%M%S')
@@ -244,7 +268,12 @@ def main():
     elif args.mode == 'backup':
         if args.backup_mode == 'create':
             create_snapshot(args.snapshot_name)
+<<<<<<< HEAD
+            compr_snapshot("%s.tar.gz" % args.snapshot_name, args.temp, snapshot="%s" % args.snapshot_name,  data_dir="%s" % args.data_dir)
+            print "%s Moving %s.tar.gz to %s" % (datetime.datetime.now(), args.snapshot_name, args.target)
+=======
             compr_snapshot("%s.tar.gz" % args.snapshot_name, args.temp, data_dir="%s" % args.data_dir)
+>>>>>>> 0c632e4b90ca8ac211a30ff8d29e1893a67260a6
             shutil.move("%s/%s.tar.gz" % (args.temp, args.snapshot_name), args.target)
             backup_schemas(args.target, "%s_schemas_%s.tar.gz" % (args.snapshot_name, now), args.temp, host="%s" % args.host_name)
         elif args.backup_mode == 'remove':
